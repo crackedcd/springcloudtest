@@ -4,7 +4,7 @@
 ---
 
 
-- 外部通过mopen开放接口, 网关到mapi处理业务逻辑, 通过mdc访问数据, 配置是mconfigserver/mconfigclient.
+- 外部通过mopen开放接口, 网关到mapi处理业务逻辑, 通过mdc访问数据, 配置是mconfigserver.
 
 - 环境 springboot2.0.2, jdk10.
 
@@ -35,12 +35,10 @@
 
 -  config-client注册到注册中心后, 把get某个配置的方法包装成feign接口, 其他服务基于feign接口访问配置, 这样可以把配置服务基于域名来发布.
 
--  **(TODO)** 使用 https://github.com/ctripcorp/apollo 替代 springcloud config.
-
 -  eureka server的高可用, 是在server的classpath中同时指定两个properties文件, 在两个文件中的spring.application.name一致, eureka.client.serviceUrl.defaultZone分别设置为对方.
     配置hosts:
 
->    127.0.0.1    eureka.server.primary
+>   127.0.0.1    eureka.server.primary
 >   127.0.0.1    eureka.server.secondary
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过设置jvm参数, 启动两个eureka server:
@@ -50,3 +48,6 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;若启动成功, 可在界面的DS Replicas中看到备用server的情况. 然后将服务注册到任意一个eureka server即可.
 
+-  configserver提供配置服务, 所有其他需要引用配置的服务都不需要application.yml/properties了, 只需要在bootstrap中指定配置中心即可, 所有配置都通过配置中心获取. 需要在pom中引入spring-cloud-starter-config. (运行时命令行参数优先级 > boostrap > application)
+
+-  **(TODO)** 使用 https://github.com/ctripcorp/apollo 替代 springcloud config.
